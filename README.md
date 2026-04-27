@@ -43,7 +43,7 @@
 ---
 
 ## 📂 ساختار فایل‌ها
-```
+
 .
 ├── encoder.v           # Encoder (Verilog)
 ├── tb_encoder.v        # Testbench
@@ -86,7 +86,7 @@ python encoder_gui.py
 ---
 
 📌 توسعه‌دهنده:  
-**Mohsen_Taghipour**  
+**Mohsen_Taghipour  ```
 
 
 ---
