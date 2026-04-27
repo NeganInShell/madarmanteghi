@@ -53,7 +53,7 @@
 ├── encoder_gui.py      # شبیه‌ساز گرافیکی (Tkinter)
 └── README.md
 
----
+---```
 
 ## ▶️ نحوه اجرا (Verilog)
 bash
@@ -86,7 +86,7 @@ python encoder_gui.py
 ---
 
 📌 توسعه‌دهنده:  
-**Mohsen_Taghipour  ```
+**Mohsen_Taghipour  
 
 
 ---
