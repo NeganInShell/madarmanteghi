@@ -86,7 +86,7 @@ python encoder_gui.py
 ---
 
 📌 توسعه‌دهنده:  
-**Mohsen**  
+**Mohsen_Taghipour**  
 
 
 ---
