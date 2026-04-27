@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارائه مدار منطقی | Encoder & Decoder</title>
+
+    <style>
+        :root {
+            --bg-main: #0b1120;
+            --bg-card: #020617;
+            --border-soft: rgba(56, 189, 248, 0.25);
+            --title: #38bdf8;
+            --text-main: #e5e7eb;
+            --text-soft: #cbd5f5;
+            --accent: #facc15;
+            --code-bg: #020617;
+            --code-text: #22d3ee;
+        }
+
+        body {
+            font-family: Vazirmatn, Tahoma, sans-serif;
+            background: linear-gradient(180deg, #020617, #0b1120);
+            color: var(--text-main);
+            margin: 0;
+            padding: 18px;
+            line-height: 1.9;
+            direction: rtl;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--title);
+            margin-top: 36px;
+            letter-spacing: 0.3px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.3em;
+            border-bottom: 2px solid var(--border-soft);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+
+        h3 {
+            font-size: 1.25em;
+            color: #7dd3fc;
+        }
+
+        section {
+            background: radial-gradient(circle at top right, #020617, #020617);
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin-top: 26px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 26px rgba(56, 189, 248, 0.25);
+        }
+
+        p {
+            color: var(--text-soft);
+            margin-top: 10px;
+        }
+
+        ul {
+            padding-right: 22px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            border: 1px solid var(--border-soft);
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 14px;
+            overflow-x: auto;
+            margin-top: 14px;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: #a5f3fc;
+            font-size: 0.9em;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .note {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-right: 4px solid var(--accent);
+            background: rgba(250, 204, 21, 0.08);
+            border-radius: 8px;
+            color: #fde68a;
+            font-size: 0.95em;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.85em;
+            opacity: 0.65;
+            border-top: 1px solid var(--border-soft);
+            padding-top: 18px;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            h1 {
+                font-size: 1.9em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            section {
+                padding: 14px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>📘 پروژه مدار منطقی<br>Encoder & Decoder</h1>
+
+    <section>
+        <h2>🔰 مقدمه</h2>
+        <p>
+            مدارهای منطقی دیجیتال پایه و اساس تمامی سیستم‌های دیجیتال مدرن هستند.
+            از ساده‌ترین ماشین‌حساب‌ها تا پیچیده‌ترین پردازنده‌ها، همگی بر اساس منطق
+            دیجیتال طراحی شده‌اند.
+        </p>
+        <p>
+            در این پروژه، هدف ما <span class="highlight">درک مفهومی و عملی</span> عملکرد
+            Encoder و Decoder و شبیه‌سازی آن‌ها روی سیستم‌عامل لینوکس است.
+        </p>
+    </section>
+
+    <section>
+        <h2>🧱 منطق دیجیتال به زبان ساده</h2>
+        <ul>
+            <li>سیگنال دیجیتال فقط دو حالت دارد: <code>0</code> و <code>1</code></li>
+            <li>این حالات به‌ترتیب معادل OFF و ON هستند</li>
+            <li>مدارهای منطقی با استفاده از گیت‌ها این سیگنال‌ها را پردازش می‌کنند</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>🔢 Encoder چیست؟</h2>
+        <p>
+            Encoder مداری است که چند ورودی را دریافت کرده و آن‌ها را به یک کد دودویی فشرده
+            تبدیل می‌کند.
+        </p>
+
+        <p>
+            در این پروژه از <span class="highlight">Priority Encoder 4-to-2</span> استفاده شده است.
+        </p>
+
+        <ul>
+            <li>۴ ورودی → ۲ خروجی</li>
+            <li>در صورت فعال بودن چند ورودی، ورودی با اولویت بالاتر انتخاب می‌شود</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>⭐ مفهوم Priority</h2>
+        <p>
+            اگر بیش از یک ورودی هم‌زمان فعال باشند، مدار نمی‌تواند یک خروجی قطعی تولید کند.
+        </p>
+
+        <p>
+            بنابراین از مفهوم <span class="highlight">اولویت (Priority)</span> استفاده می‌شود:
+        </p>
+
+        <ul>
+            <li>D3 بالاترین اولویت</li>
+            <li>D0 پایین‌ترین اولویت</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>⚠️ سیگنال Error</h2>
+        <p>
+            در صورتی که بیش از یک ورودی فعال باشد، سیگنال Error روشن می‌شود تا وضعیت نامعتبر
+            مشخص گردد.
+        </p>
+
+        <p>
+            این ویژگی باعث می‌شود مدار <span class="highlight">واقع‌گرایانه و صنعتی</span> باشد.
+        </p>
+    </section>
+
+    <section>
+        <h2>🔁 Decoder چیست؟</h2>
+        <p>
+            Decoder عملکرد معکوس Encoder را انجام می‌دهد:
+        </p>
+
+        <ul>
+            <li>۲ ورودی دودویی → ۴ خروجی مجزا</li>
+            <li>تنها یکی از خروجی‌ها فعال می‌شود</li>
+        </ul>
+
+        <p>
+            در این پروژه، خروجی Encoder به ورودی Decoder متصل شده است.
+        </p>
+    </section>
+
+    <section>
+        <h2>💻 پیاده‌سازی با Verilog</h2>
+        <p>
+            Verilog یک زبان توصیف سخت‌افزار (HDL) است که برای طراحی و شبیه‌سازی مدارهای
+            دیجیتال استفاده می‌شود.
+        </p>
+
+        <ul>
+            <li>قابل شبیه‌سازی</li>
+            <li>استاندارد صنعتی</li>
+            <li>مستقل از ابزارهای گرافیکی</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>📈 شبیه‌سازی و Waveform</h2>
+        <p>
+            با استفاده از <code>iverilog</code> مدار شبیه‌سازی شده و فایل Waveform تولید می‌شود.
+        </p>
+
+        <p>
+            این فایل با <code>GTKWave</code> قابل مشاهده است و رفتار سیگنال‌ها را در زمان نشان می‌دهد.
+        </p>
+    </section>
+
+    <section>
+        <h2>🎨 شبیه‌ساز گرافیکی</h2>
+        <p>
+            به‌دلیل محدودیت دسترسی به ابزارهای آنلاین، یک شبیه‌ساز گرافیکی آفلاین با
+            <span class="highlight">Python و Tkinter</span> طراحی شده است.
+        </p>
+
+        <ul>
+            <li>سوئیچ‌های ورودی</li>
+            <li>نمایش گیت‌ها و سیم‌ها</li>
+            <li>LED خروجی</li>
+            <li>Tr</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>🐍 توضیح کد Python (Encoder)</h2>
+
+        <p>
+            در این بخش، منطق عملکرد Encoder به‌صورت نرم‌افزاری و با استفاده از زبان Python
+            پیاده‌سازی شده است تا جدول درستی (Truth Table) مدار به‌صورت متنی نمایش داده شود.
+        </p>
+
+        <h3>🔹 چاپ عنوان جدول</h3>
+        <p>
+            در ابتدای برنامه، با استفاده از دستور <code>print</code>، عنوان ستون‌های ورودی
+            و خروجی چاپ می‌شود تا خروجی برنامه خوانا و مشابه جدول درستی مدار باشد.
+        </p>
+
+        <h3>🔹 بررسی تمام حالت‌های ورودی</h3>
+        <p>
+            چهار حلقه <code>for</code> تو در تو استفاده شده‌اند تا تمام حالت‌های ممکن
+            ورودی‌های <code>D0</code> تا <code>D3</code> بررسی شوند.
+            این کار معادل بررسی تمام ترکیب‌های باینری ممکن برای یک Encoder چهار ورودی است.
+        </p>
+
+        <h3>🔹 شرط فعال بودن تنها یک ورودی</h3>
+        <p>
+            با استفاده از شرط <code>D3 + D2 + D1 + D0 == 1</code> اطمینان حاصل می‌شود که
+            در هر لحظه فقط یک ورودی فعال باشد.
+            این شرط رفتار Encoder ایده‌آل را شبیه‌سازی می‌کند.
+        </p>
+
+        <h3>🔹 محاسبه خروجی‌ها</h3>
+        <p>
+            خروجی‌های <code>Y1</code> و <code>Y0</code> با استفاده از عملگر منطقی <code>OR</code>
+            محاسبه می‌شوند.
+            این روابط دقیقاً مطابق با جدول درستی Priority Encoder 4-to-2 طراحی شده‌اند.
+        </p>
+
+        <h3>🔹 نمایش خروجی نهایی</h3>
+        <p>
+            در نهایت، ورودی‌ها و خروجی‌ها در قالب یک سطر چاپ می‌شوند تا نتیجه عملکرد Encoder
+            به‌صورت واضح و قابل بررسی نمایش داده شود.
+        </p>
+
+    </section>
+    <section>
+        <h2>🧠 شبیه‌سازی گرافیکی Encoder و Decoder با Python</h2>
+
+        <p>
+            در این پروژه، مدار <strong>Priority Encoder 3→2</strong> و
+            <strong>Decoder 2→4</strong> به‌صورت گرافیکی و تعاملی
+            با استفاده از زبان Python و کتابخانه Tkinter پیاده‌سازی شده است.
+            هدف اصلی، نمایش رفتار واقعی مدارهای منطقی به‌شکل بصری و قابل درک است.
+        </p>
+
+        <h3>🔹 محیط گرافیکی (Tkinter)</h3>
+        <p>
+            برای ایجاد رابط گرافیکی، از کتابخانه <code>Tkinter</code> استفاده شده است.
+            این کتابخانه به‌صورت پیش‌فرض در Python وجود دارد و برای پروژه‌های آموزشی
+            و شبیه‌سازی بسیار مناسب است.
+        </p>
+
+        <p>
+            تمام اجزای مدار روی یک <code>Canvas</code> رسم شده‌اند تا امکان
+            طراحی آزادانه گیت‌ها، سیم‌ها، کلیدها و LEDها فراهم شود.
+        </p>
+
+        <h3>🔹 ورودی‌های منطقی</h3>
+        <p>
+            ورودی‌های مدار شامل سه سیگنال <strong>D1 ،D2 و D3</strong> هستند که
+            با استفاده از کلیدهای گرافیکی (Checkbutton) کنترل می‌شوند.
+            هر ورودی به یک متغیر از نوع <code>IntVar</code> متصل است
+            که مقدار منطقی صفر یا یک را نگهداری می‌کند.
+        </p>
+
+        <p>
+            با تغییر وضعیت هر کلید، مدار به‌صورت زنده به‌روزرسانی می‌شود.
+        </p>
+
+        <h3>🔹 توابع رسم اجزا</h3>
+        <p>
+            برای افزایش خوانایی و ساختارمند شدن کد، رسم هر بخش از مدار
+            در قالب توابع جداگانه انجام شده است:
+        </p>
+
+        <ul>
+            <li><strong>draw_switch</strong> برای نمایش کلیدهای ورودی</li>
+            <li><strong>draw_led</strong> برای نمایش خروجی‌ها و وضعیت خطا</li>
+            <li><strong>draw_or_gate</strong> برای رسم گیت‌های OR</li>
+            <li><strong>wire</strong> برای نمایش سیم‌های ارتباطی مدار</li>
+        </ul>
+
+        <p>
+            این روش باعث می‌شود کد ماژولار، قابل توسعه و قابل فهم باشد.
+        </p>
+
+        <h3>🔹 نمایش جریان سیگنال</h3>
+        <p>
+            برای شبیه‌سازی عبور سیگنال در مدار، سیم‌ها در صورت فعال بودن سیگنال
+            به رنگ سبز و به‌صورت چشمک‌زن نمایش داده می‌شوند.
+            این ویژگی با استفاده از یک متغیر کنترلی و تابع زمان‌بندی
+            <code>after</code> پیاده‌سازی شده است.
+        </p>
+
+        <h3>🔹 منطق Priority Encoder</h3>
+        <p>
+            در این مدار، Encoder از نوع <strong>Priority Encoder</strong> است
+            که اولویت ورودی‌ها به‌صورت زیر تعریف شده است:
+        </p>
+
+        <p><strong>D3 &gt; D2 &gt; D1</strong></p>
+
+        <p>
+            خروجی‌های Encoder به‌صورت زیر محاسبه می‌شوند:
+        </p>
+
+        <ul>
+            <li><strong>Y1</strong> فعال می‌شود اگر D3 یا D2 فعال باشد</li>
+            <li><strong>Y0</strong> فعال می‌شود اگر D3 یا D1 فعال باشد</li>
+        </ul>
+
+        <p>
+            در صورتی که بیش از یک ورودی به‌طور همزمان فعال شود،
+            یک LED خطا روشن می‌شود تا وضعیت نامعتبر را نمایش دهد.
+        </p>
+
+        <h3>🔹 Decoder 2→4</h3>
+        <p>
+            خروجی Encoder به‌عنوان ورودی Decoder استفاده شده است.
+            Decoder تنها یکی از چهار خروجی خود را فعال می‌کند
+            و این موضوع به‌صورت LED نمایش داده می‌شود.
+        </p>
+
+        <p>
+            این اتصال نشان می‌دهد که چگونه می‌توان چند مدار منطقی
+            را به‌صورت زنجیره‌ای به یکدیگر متصل کرد.
+        </p>
+
+        <h3>🔹 جدول درستی (Truth Table)</h3>
+        <p>
+            در کنار مدار، یک جدول درستی معتبر نمایش داده شده است.
+            سطر متناظر با وضعیت فعلی ورودی‌ها به‌صورت رنگی مشخص می‌شود
+            تا ارتباط بین ورودی‌ها و خروجی‌ها به‌صورت بصری قابل مشاهده باشد.
+        </p>
+
+        <h3>✅ نتیجه</h3>
+        <p>
+            این شبیه‌ساز نشان می‌دهد که مفاهیم تئوری مدارهای منطقی
+            می‌توانند به‌صورت عملی، تعاملی و قابل فهم پیاده‌سازی شوند.
+            این روش یادگیری، درک عمیق‌تری از عملکرد واقعی مدارها ایجاد می‌کند.
+        </p>
+
+    </section>
+
+    <section>
+        <h2>🌐 محدودیت شبکه و نتیجه</h2>
+        <p>
+            با وجود محدودیت‌های دسترسی به اینترنت جهانی و شرایط خاص شبکه، این پروژه
+            نشان می‌دهد که:
+        </p>
+
+        <p class="highlight">
+            محدودیت های اینترنت ملی سبب رویکرد های متفاوت شده است(جزاین چیزی نمیشه گفت!)
+        </p>
+    </section>
+
+    <section>
+        <h2>✅ جمع‌بندی نهایی</h2>
+        <ul>
+            <li>درک عمیق مفاهیم مدار منطقی</li>
+            <li>پیاده‌سازی عملی Encoder و Decoder</li>
+            <li>استفاده از ابزارهای متن‌باز</li>
+            <li>اجرای کامل به‌صورت آفلاین</li>
+        </ul>
+    </section>
+    <section>
+        <h2>🔧 پیاده‌سازی Encoder 4→2 با Verilog</h2>
+
+        <p>
+            در این بخش، مدار <strong>Encoder 4→2</strong> با استفاده از زبان
+            توصیف سخت‌افزار <strong>Verilog</strong> پیاده‌سازی شده است.
+            این پیاده‌سازی بیانگر نسخه‌ی سخت‌افزاری و قابل سنتز مدار Encoder می‌باشد.
+        </p>
+
+        <h3>🔹 معرفی ماژول</h3>
+        <p>
+            ماژول با نام <code>encoder_4to2</code> تعریف شده و دارای چهار ورودی
+            <code>D0</code> تا <code>D3</code> و دو خروجی <code>Y1</code> و
+            <code>Y0</code> است.
+        </p>
+
+        <p>
+            در این مدار فرض می‌شود که در هر لحظه تنها یکی از ورودی‌ها فعال است
+            (Encoder ساده و غیر Priority).
+        </p>
+
+        <h3>🔹 منطق مدار</h3>
+        <p>
+            منطق Encoder با استفاده از عملگر OR پیاده‌سازی شده است:
+        </p>
+
+        <ul>
+            <li>
+                خروجی <strong>Y1</strong> برابر OR ورودی‌های <code>D2</code> و <code>D3</code> است
+            </li>
+            <li>
+                خروجی <strong>Y0</strong> برابر OR ورودی‌های <code>D1</code> و <code>D3</code> است
+            </li>
+        </ul>
+
+        <p>
+            این روابط دقیقاً مطابق جدول درستی Encoder 4→2 می‌باشند.
+        </p>
+
+        <h3>🔹 ویژگی‌های پیاده‌سازی</h3>
+        <ul>
+            <li>استفاده از دستور <code>assign</code> برای توصیف منطق ترکیبی</li>
+            <li>عدم استفاده از always block برای سادگی و شفافیت مدار</li>
+            <li>کاملاً قابل سنتز و مناسب پیاده‌سازی روی FPGA</li>
+            <li>تطابق کامل با پیاده‌سازی شبیه‌ساز گرافیکی در Python</li>
+        </ul>
+
+        <h3>🔹 تفاوت با Priority Encoder</h3>
+        <p>
+            این ماژول یک Encoder ساده است و در صورتی که بیش از یک ورودی
+            به‌طور همزمان فعال شود، خروجی‌ها قابل پیش‌بینی نخواهند بود.
+        </p>
+
+        <p>
+            در شبیه‌ساز گرافیکی Python، برای افزایش ایمنی مدار،
+            از منطق <strong>Priority Encoder</strong> به همراه نمایش خطا استفاده شده است.
+        </p>
+
+        <h3>✅ جمع‌بندی</h3>
+        <p>
+            این بخش نشان می‌دهد که چگونه منطق تئوری Encoder
+            می‌تواند به‌صورت مستقیم و استاندارد
+            در سطح سخت‌افزار با Verilog پیاده‌سازی شود.
+        </p>
+
+    </section>
+    <section id="testbench">
+        <h2>Testbench مدار Encoder (tb_encoder.v)</h2>
+
+        <p>
+            برای بررسی صحت عملکرد مدار <b>Encoder 4 به 2</b>، از یک
+            <b>Testbench استاندارد</b> در زبان Verilog استفاده شده است.
+            Testbench وظیفه دارد ورودی‌ها را به مدار اعمال کند،
+            خروجی‌ها را مشاهده نماید و نتایج را در قالب جدول و موج‌نما نمایش دهد.
+        </p>
+
+        <h3>ساختار کلی Testbench</h3>
+        <p>
+            ماژول تست با نام <code>tb_encoder</code> تعریف شده است و شامل
+            سیگنال‌های ورودی، خروجی، نمونه‌سازی از مدار اصلی و بلاک شبیه‌سازی می‌باشد.
+        </p>
+
+        <pre><code>module tb_encoder;</code></pre>
+
+        <h3>تعریف سیگنال‌ها</h3>
+        <ul>
+            <li>
+                <b>reg d0, d1, d2, d3</b> :
+                ورودی‌های مدار که در Testbench مقداردهی می‌شوند.
+            </li>
+            <li>
+                <b>wire y1, y0</b> :
+                خروجی‌های مدار که نتیجه‌ی عملکرد Encoder را نشان می‌دهند.
+            </li>
+        </ul>
+
+        <h3>نمونه‌سازی مدار (UUT)</h3>
+        <p>
+            مدار اصلی با نام <code>encoder_4to2</code> به عنوان
+            <b>Unit Under Test (UUT)</b> نمونه‌سازی شده و سیگنال‌های
+            Testbench به پورت‌های آن متصل شده‌اند.
+        </p>
+
+        <h3>بلاک شبیه‌سازی (initial block)</h3>
+        <p>
+            تمام فرآیند شبیه‌سازی داخل یک بلاک <code>initial</code> انجام می‌شود.
+            این بلاک شامل مراحل زیر است:
+        </p>
+
+        <ul>
+            <li>
+                <b>تولید فایل موج‌نما (VCD)</b> با استفاده از دستورات
+                <code>$dumpfile</code> و <code>$dumpvars</code> برای مشاهده سیگنال‌ها
+                در نرم‌افزار GTKWave.
+            </li>
+            <li>
+                <b>نمایش جدول درستی</b> با دستور <code>$display</code> برای مشاهده
+                ورودی‌ها و خروجی‌ها در ترمینال.
+            </li>
+            <li>
+                <b>اعمال الگوهای ورودی</b> به صورت تک‌ورودی (One-Hot)
+                همراه با تأخیر زمانی (<code>#10</code>) برای پایدار شدن خروجی.
+            </li>
+            <li>
+                <b>پایان شبیه‌سازی</b> با دستور <code>$finish</code>.
+            </li>
+        </ul>
+
+        <h3>هدف Testbench</h3>
+        <p>
+            هدف از این Testbench، اطمینان از عملکرد صحیح مدار Encoder
+            در شرایط استاندارد است؛ به‌طوری‌که با فعال شدن هر ورودی،
+            خروجی متناظر آن به درستی تولید شود.
+        </p>
+
+        <p>
+            خروجی شبیه‌سازی هم به صورت متنی (Truth Table) و هم به صورت
+            موج‌نما (Waveform) قابل بررسی می‌باشد.
+        </p>
+
+        <div class="note">
+            ✅ این Testbench برای شبیه‌سازی طراحی شده است و در فرآیند
+            سنتز سخت‌افزاری (Synthesis) استفاده نمی‌شود.
+        </div>
+    </section>
+
+    <footer>
+        ارائه‌دهنده:MohsenTaghipour<br>
+        پروژه مدار منطقی – 1405
+    </footer>
+
+</body>
+
+</html>
