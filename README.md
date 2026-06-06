@@ -1,5 +1,4 @@
 
-```markdown
 # 🧠 مدار منطقی دیجیتال – Encoder و Decoder
 
 ## 📌 معرفی پروژه
